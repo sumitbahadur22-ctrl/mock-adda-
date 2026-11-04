@@ -82,6 +82,135 @@ section{padding:40px 18px}
 <p>© 2026 Mock Adda | Learn • Practice • Succeed</p>
 <p>Made for Every Aspirant</p>
 </footer>
+<style>
+.mock-section {
+  max-width: 850px;
+  margin: 40px auto;
+  padding: 22px;
+  background: #172033;
+  color: white;
+  border-radius: 14px;
+  font-family: Arial, sans-serif;
+}
+.mock-section h2 { color: #f5c542; }
+.mock-question {
+  background: #222f45;
+  padding: 16px;
+  margin: 15px 0;
+  border-radius: 10px;
+}
+.mock-question label {
+  display: block;
+  padding: 8px;
+  cursor: pointer;
+}
+.mock-section button {
+  background: #f5c542;
+  color: #111;
+  border: 0;
+  padding: 12px 22px;
+  border-radius: 7px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#mock-result {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #f5c542;
+}
+</style>
 
+<section class="mock-section">
+  <h2>SSC CGL Tier 1 - Mock Test</h2>
+  <p>Total Questions: 10 | Time: 10 Minutes</p>
+  <h3>Time Left: <span id="mock-timer">10:00</span></h3>
+
+  <form id="mock-form"></form>
+  <button type="button" id="mock-submit">Submit Test</button>
+  <div id="mock-result"></div>
+</section>
+
+<script>
+(function () {
+  const questions = [
+    {q:"What is 25% of 240?",o:["40","50","60","70"],a:2},
+    {q:"96 divided by 12 is:",o:["6","7","8","9"],a:2},
+    {q:"Find the next number: 2, 6, 12, 20, 30, ?",o:["36","40","42","44"],a:2},
+    {q:"Choose the odd one out.",o:["Apple","Mango","Carrot","Banana"],a:2},
+    {q:"Synonym of Abundant is:",o:["Scarce","Plentiful","Empty","Small"],a:1},
+    {q:"Antonym of Ancient is:",o:["Old","Historic","Modern","Past"],a:2},
+    {q:"Who was the first President of India?",o:["Jawaharlal Nehru","Dr. Rajendra Prasad","Sardar Patel","Dr. Radhakrishnan"],a:1},
+    {q:"What is the capital of Rajasthan?",o:["Jaipur","Jodhpur","Udaipur","Kota"],a:0},
+    {q:"A is the brother of B. B is the sister of C. Assuming they are siblings, how is A related to C?",o:["Brother","Sister","Father","Uncle"],a:0},
+    {q:"What is 15% of 200?",o:["20","25","30","35"],a:2}
+  ];
+
+  const form = document.getElementById("mock-form");
+  const result = document.getElementById("mock-result");
+  const timerDisplay = document.getElementById("mock-timer");
+  const submitButton = document.getElementById("mock-submit");
+
+  questions.forEach((q,i) => {
+    const div = document.createElement("div");
+    div.className = "mock-question";
+
+    const heading = document.createElement("b");
+    heading.textContent = (i+1) + ". " + q.q;
+    div.appendChild(heading);
+
+    q.o.forEach((option,j) => {
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "mock-q-" + i;
+      radio.value = j;
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(" " + option));
+      div.appendChild(label);
+    });
+
+    form.appendChild(div);
+  });
+
+  let seconds = 600;
+  let finished = false;
+
+  function submitTest() {
+    if (finished) return;
+    finished = true;
+    clearInterval(timer);
+
+    let score = 0;
+    questions.forEach((q,i) => {
+      const selected = form.querySelector(
+        'input[name="mock-q-' + i + '"]:checked'
+      );
+      if (selected && Number(selected.value) === q.a) score++;
+    });
+
+    result.textContent =
+      "Your Score: " + score + " / " + questions.length +
+      " | Incorrect or Unanswered: " + (questions.length-score);
+
+    form.querySelectorAll("input").forEach(input => {
+      input.disabled = true;
+    });
+    submitButton.disabled = true;
+  }
+
+  const timer = setInterval(() => {
+    if (finished) return;
+    seconds--;
+
+    timerDisplay.textContent =
+      Math.floor(seconds/60) + ":" +
+      String(seconds%60).padStart(2,"0");
+
+    if (seconds <= 0) submitTest();
+  }, 1000);
+
+  submitButton.addEventListener("click", submitTest);
+})();
+</script>
 </body>
 </html>
